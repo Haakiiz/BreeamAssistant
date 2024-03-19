@@ -67,14 +67,15 @@ async def get_context(
 ):
     # convert query to embeddings
     res = openai_client.embeddings.create(
-        input=[query_data.query], model="text-embedding-ada-002"
+        input=[query_data.query], model="text-embedding-3-small"
     )
     embedding = res.data[0].embedding
     # Search for matching Vectors
     results = index.query(vector=embedding, top_k=6, include_metadata=True).to_dict()
     # Filter out metadata fron search result
-    context = [match["metadata"]["text"] for match in results["matches"]]
+    context = [{"text": match["metadata"]["text"], "id": match["id"]} for match in results["matches"]]
     # Retrun context
+    #    context = [match["metadata"]["text"] for match in results["matches"]] FUNGERER MEN FÅR KUN IGJEN TEXT
     return context
 
 
